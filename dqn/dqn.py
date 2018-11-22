@@ -22,7 +22,7 @@ class DQN:
     def __init__(self,
             env,
             batchsize=64,
-            pic_size=(96,96),
+            input_size=(64,64),
             num_frame_stack=4,
             gamma=0.95,
             frame_skip=1,
@@ -41,7 +41,7 @@ class DQN:
         self.exp_history = ExperienceHistory(
             num_frame_stack,
             capacity=experience_capacity,
-            pic_size=pic_size
+            input_size=input_size
         )
 
         # in playing mode we don't store the experience to agent history
@@ -49,7 +49,7 @@ class DQN:
         self.playing_cache = ExperienceHistory(
             num_frame_stack,
             capacity=num_frame_stack * 5 + 10,
-            pic_size=pic_size
+            input_size=input_size
         )
 
         if action_map is not None:
@@ -70,7 +70,7 @@ class DQN:
         self.epsilon_decay_steps = epsilon_decay_steps
         self.render = render
         self.min_experience_size = min_experience_size
-        self.pic_size = pic_size
+        self.input_size = input_size
         self.regularization = regularization
         # These default magic values always work with Adam
         self.optimizer_params = optimizer_params or dict(learning_rate=0.0004, epsilon=1e-7)
@@ -79,7 +79,7 @@ class DQN:
         self.playing_epsilon = 0.0
         self.session = None
 
-        self.state_size = (self.num_frame_stack,) + self.pic_size
+        self.state_size = (self.num_frame_stack,) + self.input_size
         self.global_counter = 0
         self.episode_counter = 0
 
@@ -88,8 +88,8 @@ class DQN:
         return 2 * color.rgb2gray(transform.rescale(img[34:194], 0.5)) - 1
 
     def build_graph(self):
-        input_dim_with_batch = (self.batchsize, self.num_frame_stack) + self.pic_size
-        input_dim_general = (None, self.num_frame_stack) + self.pic_size
+        input_dim_with_batch = (self.batchsize, self.num_frame_stack) + self.input_size
+        input_dim_general = (None, self.num_frame_stack) + self.input_size
 
         self.input_prev_state = tf.placeholder(tf.float32, input_dim_general, "prev_state")
         self.input_next_state = tf.placeholder(tf.float32, input_dim_with_batch, "next_state")
@@ -270,7 +270,7 @@ class CarRacingDQN(DQN):
         kwargs["render"] = True
         super().__init__(
             action_map=all_actions,
-            pic_size=(96, 96),
+            # input_size=(96, 96),
             **kwargs
         )
 

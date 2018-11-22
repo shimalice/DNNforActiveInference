@@ -20,8 +20,8 @@ class CarRacingWrapper(CarRacing):
     self.full_episode = full_episode
     self.observation_space = Box(low=0, high=255, shape=(SCREEN_X, SCREEN_Y, 3)) # , dtype=np.uint8
 
-  def _step(self, action):
-    obs, reward, done, _ = super(CarRacingWrapper, self)._step(action)
+  def step(self, action):
+    obs, reward, done, _ = super(CarRacingWrapper, self).step(action)
     if self.full_episode:
       return _process_frame(obs), reward, False, {}
     return _process_frame(obs), reward, done, {}
@@ -57,7 +57,7 @@ if __name__=="__main__":
     if k==key.RIGHT and a[0]==+1.0: a[0] = 0
     if k==key.UP:    a[1] = 0
     if k==key.DOWN:  a[2] = 0
-  env = CarRacing()
+  env = CarRacingWrapper()
   env.render()
   env.viewer.window.on_key_press = key_press
   env.viewer.window.on_key_release = key_release

@@ -13,11 +13,11 @@ class ExperienceHistory:
     def __init__(self,
             num_frame_stack=4,
             capacity=int(1e5),
-            pic_size=(96, 96)
+            input_size=(64, 64)
     ):
         self.num_frame_stack = num_frame_stack
         self.capacity = capacity
-        self.pic_size = pic_size
+        self.input_size = input_size
         self.counter = 0
         self.frame_window = None
         self.init_caches()
@@ -79,4 +79,4 @@ class ExperienceHistory:
 
         # lazy to think how big is the smallest possible number. At least this is big enough
         self.max_frame_cache = self.capacity + 2 * self.num_frame_stack + 1
-        self.frames = -np.ones((self.max_frame_cache,) + self.pic_size, dtype="float32")
+        self.frames = -np.ones((self.max_frame_cache,) + self.input_size, dtype="float32")

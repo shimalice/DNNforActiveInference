@@ -13,20 +13,21 @@ Experience history is never saved
 Training and playing can be early stopped by giving input (pressing enter in console)
 """
 
-from model import Model
+from dqn.dqn import CarRacingDQN
 import os
 import tensorflow as tf
 import gym
 import _thread
 import re
 import sys
+from env import make_env
 
 # SETTINGS
 
 # to start training from scratch:
 load_checkpoint = False
 checkpoint_path = "data/checkpoint02"
-train_episodes = float("inf")
+train_episodes = 2000
 save_freq_episodes = 400
 
 # To play from existing checkpoint without any training:
@@ -45,17 +46,20 @@ model_config = dict(
     epsilon_decay_steps=int(1e5),
     network_update_freq=int(1e3),
     experience_capacity=int(4e4),
-    gamma=0.95
+    gamma=0.95,
+    input_size=(64,64)
 )
 
 print(model_config)
 ########
 
-env_name = "CarRacing-v0"
-env = gym.make(env_name)
+env = make_env("carracing", seed=-1, render_mode=False, full_episode=False)
+
+# env_name = "CarRacing-v0"
+# env = gym.make(env_name)
 
 # tf.reset_default_graph()
-dqn_agent = Model(env=env, **model_config)
+dqn_agent = CarRacingDQN(env=env, **model_config)
 dqn_agent.build_graph()
 sess = tf.InteractiveSession()
 dqn_agent.session = sess
